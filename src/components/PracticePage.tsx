@@ -57,6 +57,10 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
     setProblems(newProblems);
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   const getSizeClass = () => {
     if (problemsPerPage <= 30) return 'size-30';
     if (problemsPerPage <= 40) return 'size-40';
@@ -65,9 +69,14 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
 
   return (
     <div className="practice-page">
-      <button onClick={generateProblems} className="new-problems-btn no-print">
-        New Problems
-      </button>
+      <div className="button-group no-print">
+        <button onClick={generateProblems} className="new-problems-btn">
+          New Problems
+        </button>
+        <button onClick={handlePrint} className="print-btn">
+          Print
+        </button>
+      </div>
       <div className="header-section">
         <h1>{selectedNumber ? `${selectedNumber}'s Times Tables` : 'Mixed Practice'}</h1>
         {showHeader && (
