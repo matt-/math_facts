@@ -1,0 +1,339 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  background-color: white;
+  color: black;
+}
+
+body {
+  background-color: white;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  font-family: 'Ubuntu Mono', monospace;
+}
+
+.math-problem {
+  display: inline-block;
+  margin-bottom: 2rem;
+  width: 48px;
+}
+
+.size-30 .math-problem {
+  width: 75px;
+}
+
+.size-30 .number {
+  font-size: 1.75rem;
+  width: 48px;
+}
+
+.size-30 .multiplication-sign {
+  font-size: 1.55rem;
+  margin-right: 9px;
+}
+
+.size-30 .answer-line {
+  width: 65px;
+}
+
+.size-40 .math-problem {
+  width: 65px;
+}
+
+.size-40 .number {
+  font-size: 1.55rem;
+  width: 43px;
+}
+
+.size-40 .multiplication-sign {
+  font-size: 1.45rem;
+  margin-right: 8px;
+}
+
+.size-40 .answer-line {
+  width: 55px;
+}
+
+.size-50 .math-problem {
+  width: 48px;
+}
+
+.size-50 .number {
+  font-size: 1.25rem;
+  width: 35px;
+}
+
+.size-50 .multiplication-sign {
+  font-size: 1.15rem;
+  margin-right: 6px;
+}
+
+.size-50 .answer-line {
+  width: 43px;
+}
+
+.problem-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.number {
+  font-size: 1.35rem;
+  font-family: 'Ubuntu Mono', monospace;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+  width: 38px;
+  text-align: right;
+}
+
+.operation-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  margin: 1px 0;
+}
+
+.multiplication-sign {
+  font-size: 1.25rem;
+  font-family: 'Ubuntu Mono', monospace;
+  line-height: 1;
+  margin-right: 7px;
+}
+
+.answer-line {
+  width: 48px;
+  height: 1px;
+  background-color: black;
+  margin-top: 3px;
+}
+
+.problems-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem 2rem;
+  margin-top: 2rem;
+  justify-items: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 0.5rem;
+}
+
+.size-30.problems-grid {
+  gap: 2rem;
+  height: 8.5in;
+}
+
+.container {
+  max-width: 8.5in;
+  margin: 0 auto;
+  padding: 0.25in;
+}
+
+.controls {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.control-group select {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.header-section {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.name-date {
+  display: flex;
+  gap: 1.5rem;
+  font-family: 'Ubuntu Mono', monospace;
+  font-size: 1rem;
+}
+
+.name-date span {
+  white-space: nowrap;
+}
+
+.new-problems-btn {
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.new-problems-btn:hover {
+  background: #2563eb;
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.header-section {
+  font-size: 1.1rem;
+}
+
+.header-section span {
+  white-space: nowrap;
+}
+
+.name-date-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.name-date-line span {
+  flex: 1;
+}
+
+@media print {
+  @page {
+    margin: 0.25in;
+    size: letter portrait;
+  }
+
+  html {
+    height: 100%;
+  }
+
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .problems-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.45in 0.3in;
+    margin: 0;
+    height: 9in;
+    max-width: 8in;
+    padding: 0.25in 0 0 0;
+  }
+  
+  .size-30.problems-grid {
+    gap: 0.6in 0.3in;
+    height: 8.5in;
+  }
+  
+  .math-problem {
+    margin: 0;
+    padding: 0;
+    page-break-inside: avoid;
+    width: 48px;
+  }
+
+  .number {
+    font-size: 1.25rem;
+    width: 35px;
+  }
+
+  .multiplication-sign {
+    font-size: 1.15rem;
+    margin-right: 6px;
+  }
+
+  .answer-line {
+    width: 43px;
+    border-top: 1px solid black;
+    height: 0;
+    background: none;
+    margin-top: 2px;
+  }
+
+  .size-30 .math-problem {
+    width: 70px;
+  }
+  
+  .size-30 .number {
+    font-size: 1.65rem;
+    width: 45px;
+  }
+  
+  .size-30 .multiplication-sign {
+    font-size: 1.45rem;
+    margin-right: 8px;
+  }
+  
+  .size-30 .answer-line {
+    width: 60px;
+  }
+  
+  .size-40 .math-problem {
+    width: 58px;
+  }
+  
+  .size-40 .number {
+    font-size: 1.45rem;
+    width: 40px;
+  }
+  
+  .size-40 .multiplication-sign {
+    font-size: 1.35rem;
+    margin-right: 7px;
+  }
+  
+  .size-40 .answer-line {
+    width: 48px;
+  }
+
+  .header-section {
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 1rem;
+    gap: 1rem;
+  }
+
+  .header-section h1 {
+    font-size: 1.5rem;
+    white-space: nowrap;
+  }
+
+  .name-date {
+    gap: 1rem;
+  }
+
+  .name-date span {
+    white-space: nowrap;
+  }
+
+  .name-date-line {
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 1rem;
+    margin-bottom: 0.2in;
+  }
+}
