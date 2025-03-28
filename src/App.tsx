@@ -3,7 +3,7 @@ import { PracticePage } from './components/PracticePage'
 
 function App() {
   const [selectedNumber, setSelectedNumber] = useState<number | undefined>(undefined);
-  const [problemsPerPage, setProblemsPerPage] = useState(30);
+  const [problemsPerPage, setProblemsPerPage] = useState(40);
   const [showHeader, setShowHeader] = useState(false);
 
   return (
@@ -15,21 +15,21 @@ function App() {
             value={selectedNumber || 'mixed'}
             onChange={(e) => setSelectedNumber(e.target.value === 'mixed' ? undefined : Number(e.target.value))}
           >
-            <option value="mixed">Mixed Numbers</option>
+            <option value="mixed">Mixed</option>
             {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
               <option key={num} value={num}>
-                {num}'s Times Tables
+                {num}'s
               </option>
             ))}
           </select>
         </div>
         <div className="control-group">
-          <label>Problems per page:</label>
+          <label>Number of Problems:</label>
           <select
             value={problemsPerPage}
             onChange={(e) => setProblemsPerPage(Number(e.target.value))}
           >
-            {[30, 50, 60, 100].map((num) => (
+            {[30, 40, 50, 60, 100].map((num) => (
               <option key={num} value={num}>
                 {num}
               </option>
