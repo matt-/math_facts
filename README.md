@@ -1,54 +1,77 @@
-# React + TypeScript + Vite
+# Math Facts Practice Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A clean, simple web application for generating multiplication practice worksheets. Perfect for teachers and parents to create customized math practice sheets that can be printed or used digitally.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Generate multiplication practice problems (1-12 times tables)
+- Choose specific times tables or mixed practice
+- Adjustable number of problems per page (30, 50, or 60 problems)
+- Print-optimized layout
+- Optional name and date fields
+- Clean, easy-to-read layout using Ubuntu Mono font
+- Responsive design that works on any device
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- Node.js (v18 or higher recommended)
+- npm (comes with Node.js)
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone [your-repository-url]
+cd math_facts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+2. Install dependencies:
+```bash
+npm install
 ```
+
+### Development
+
+To run the development server:
+```bash
+npm run dev
+```
+
+This will start the development server at `http://localhost:5173`
+
+### Building for Production
+
+To create a production build:
+```bash
+npm run build
+```
+
+This will create a `dist` directory with the production-ready files.
+
+To preview the production build locally:
+```bash
+npm run preview
+```
+
+## Deployment
+
+The built application is a static site that can be hosted on any web server or static hosting service. The contents of the `dist` directory after building contains everything needed to deploy the application.
+
+Common deployment options:
+- GitHub Pages
+- Netlify
+- Vercel
+- Any standard web server (Apache, Nginx, etc.)
+
+## Technology Stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+
+## License
+
+This project is open source and available under the MIT License.
