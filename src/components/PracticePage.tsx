@@ -80,7 +80,10 @@ export function PracticePage({ selectedNumber, maxDigits, problemsPerPage, showH
 
     const newProblems: Array<[number, number]> = [];
     
-    if (selectedNumber) {
+    // Only use selectedNumber for multiplication and division
+    const useSelectedNumber = selectedNumber && (operation === 'multiplication' || operation === 'division');
+    
+    if (useSelectedNumber) {
       // First, ensure we have one of each number 1-12
       const numbers = Array.from({length: 12}, (_, i) => i + 1);
       // Shuffle the array of 1-12
@@ -94,51 +97,20 @@ export function PracticePage({ selectedNumber, maxDigits, problemsPerPage, showH
       for (let i = 0; i < initialProblems; i++) {
         let num1: number, num2: number;
         
-        switch (operation) {
-          case 'addition':
-            // For addition, generate numbers up to maxDigits
-            const maxNum = Math.pow(10, maxDigits) - 1;
-            if (Math.random() < 0.5) {
-              num1 = selectedNumber;
-              num2 = Math.floor(Math.random() * maxNum) + 1;
-            } else {
-              num1 = Math.floor(Math.random() * maxNum) + 1;
-              num2 = selectedNumber;
-            }
-            // Ensure both numbers respect maxDigits
-            if (num1 > maxNum) num1 = maxNum;
-            if (num2 > maxNum) num2 = maxNum;
-            break;
-
-          case 'subtraction':
-            // For subtraction, ensure result is positive and numbers are within maxDigits
-            const maxSubNum = Math.pow(10, maxDigits) - 1;
+        if (operation === 'division') {
+          // For division, create problems with whole number answers
+          const multiplier = numbers[i];
+          num1 = selectedNumber * multiplier; // dividend
+          num2 = selectedNumber; // divisor
+        } else {
+          // Multiplication logic
+          if (Math.random() < 0.5) {
+            num1 = selectedNumber;
+            num2 = numbers[i];
+          } else {
+            num1 = numbers[i];
             num2 = selectedNumber;
-            // Ensure first number doesn't exceed maxDigits
-            const maxPossible = Math.min(maxSubNum, selectedNumber + maxSubNum);
-            num1 = selectedNumber + Math.floor(Math.random() * (maxPossible - selectedNumber + 1));
-            // Double check both numbers respect maxDigits
-            if (num1 > maxSubNum) num1 = maxSubNum;
-            if (num2 > maxSubNum) num2 = maxSubNum;
-            break;
-            
-          case 'division':
-            // For division, create problems with whole number answers
-            const multiplier = numbers[i];
-            num1 = selectedNumber * multiplier; // dividend
-            num2 = selectedNumber; // divisor
-            break;
-            
-          case 'multiplication':
-          default:
-            // Keep existing multiplication logic (1-12 range)
-            if (Math.random() < 0.5) {
-              num1 = selectedNumber;
-              num2 = numbers[i];
-            } else {
-              num1 = numbers[i];
-              num2 = selectedNumber;
-            }
+          }
         }
         
         newProblems.push([num1, num2]);
@@ -148,58 +120,27 @@ export function PracticePage({ selectedNumber, maxDigits, problemsPerPage, showH
       for (let i = 12; i < problemsPerPage; i++) {
         let num1: number, num2: number;
         
-        switch (operation) {
-          case 'addition':
-            // Generate addition problems with numbers up to maxDigits
-            const maxNum = Math.pow(10, maxDigits) - 1;
-            if (Math.random() < 0.5) {
-              num1 = selectedNumber;
-              num2 = Math.floor(Math.random() * maxNum) + 1;
-            } else {
-              num1 = Math.floor(Math.random() * maxNum) + 1;
-              num2 = selectedNumber;
-            }
-            // Ensure both numbers respect maxDigits
-            if (num1 > maxNum) num1 = maxNum;
-            if (num2 > maxNum) num2 = maxNum;
-            break;
-            
-          case 'subtraction':
-            // Generate subtraction problems with numbers up to maxDigits
-            const maxSubNum = Math.pow(10, maxDigits) - 1;
+        if (operation === 'division') {
+          // Generate division problems with selectedNumber as divisor
+          const multiplier = Math.floor(Math.random() * 12) + 1;
+          num1 = selectedNumber * multiplier;
+          num2 = selectedNumber;
+        } else {
+          // Keep existing multiplication logic
+          const randomNum = Math.floor(Math.random() * 12) + 1;
+          if (Math.random() < 0.5) {
+            num1 = selectedNumber;
+            num2 = randomNum;
+          } else {
+            num1 = randomNum;
             num2 = selectedNumber;
-            // Ensure first number doesn't exceed maxDigits
-            const maxPossible = Math.min(maxSubNum, selectedNumber + maxSubNum);
-            num1 = selectedNumber + Math.floor(Math.random() * (maxPossible - selectedNumber + 1));
-            // Double check both numbers respect maxDigits
-            if (num1 > maxSubNum) num1 = maxSubNum;
-            if (num2 > maxSubNum) num2 = maxSubNum;
-            break;
-            
-          case 'division':
-            // Generate division problems with selectedNumber as divisor
-            const multiplier = Math.floor(Math.random() * 12) + 1;
-            num1 = selectedNumber * multiplier;
-            num2 = selectedNumber;
-            break;
-            
-          case 'multiplication':
-          default:
-            // Keep existing multiplication logic
-            const randomNum = Math.floor(Math.random() * 12) + 1;
-            if (Math.random() < 0.5) {
-              num1 = selectedNumber;
-              num2 = randomNum;
-            } else {
-              num1 = randomNum;
-              num2 = selectedNumber;
-            }
+          }
         }
         
         newProblems.push([num1, num2]);
       }
     } else {
-      // For mixed practice, generate appropriate random problems
+      // For mixed practice or addition/subtraction, generate appropriate random problems
       for (let i = 0; i < problemsPerPage; i++) {
         let num1: number, num2: number;
         
@@ -304,17 +245,14 @@ export function PracticePage({ selectedNumber, maxDigits, problemsPerPage, showH
   };
 
   const getOperationTitle = () => {
-    if (!selectedNumber) return 'Mixed Practice';
+    const useSelectedNumber = selectedNumber && (operation === 'multiplication' || operation === 'division');
+    if (!useSelectedNumber) return 'Mixed Practice';
     switch (operation) {
-      case 'addition':
-        return `Adding ${selectedNumber}'s`;
-      case 'subtraction':
-        return `Subtracting ${selectedNumber}'s`;
       case 'division':
-        return `Dividing by ${selectedNumber}'s`;
+        return `Dividing by ${selectedNumber}`;
       case 'multiplication':
       default:
-        return `${selectedNumber}'s Times Tables`;
+        return `${selectedNumber} Times Tables`;
     }
   };
 
