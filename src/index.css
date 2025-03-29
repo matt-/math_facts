@@ -111,7 +111,7 @@ body {
   width: 48px;
   height: 1px;
   background-color: black;
-  margin-top: 3px;
+  margin: 3px 0;
 }
 
 .problems-grid {
@@ -140,7 +140,8 @@ body {
 .controls {
   display: flex;
   gap: 2rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
 }
 
 .control-group {
@@ -176,11 +177,14 @@ body {
 .button-group {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
 }
 
 .new-problems-btn,
-.print-btn {
+.print-btn,
+.check-btn,
+.timer-btn {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   border: none;
@@ -203,6 +207,48 @@ body {
 
 .print-btn:hover {
   background: #059669;
+}
+
+.check-btn {
+  background: #8b5cf6;
+}
+
+.check-btn:hover {
+  background: #7c3aed;
+}
+
+.timer-btn {
+  background: #f59e0b;
+}
+
+.timer-btn:hover {
+  background: #d97706;
+}
+
+.timer-btn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+.timer {
+  font-family: 'Ubuntu Mono', monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: #f3f4f6;
+  min-width: 4rem;
+  text-align: center;
+}
+
+.timer.running {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.timer.time-up {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 h1 {
@@ -228,6 +274,16 @@ h1 {
 
 .name-date-line span {
   flex: 1;
+}
+
+.score {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #059669;
+}
+
+.score.low {
+  color: #dc2626;
 }
 
 @media print {
@@ -353,4 +409,81 @@ h1 {
     font-size: 1rem;
     margin-bottom: 0.2in;
   }
+}
+
+.answer-input {
+  width: 48px;
+  font-size: 1.35rem;
+  font-family: 'Ubuntu Mono', monospace;
+  text-align: right;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.answer-input.correct {
+  color: #059669;
+}
+
+.answer-input.incorrect {
+  color: #dc2626;
+}
+
+.size-30 .answer-input {
+  width: 65px;
+  font-size: 1.75rem;
+}
+
+.size-40 .answer-input {
+  width: 55px;
+  font-size: 1.55rem;
+}
+
+.size-50 .answer-input {
+  width: 43px;
+  font-size: 1.25rem;
+}
+
+.fixed-timer {
+  position: fixed;
+  top: 0;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.practice-page {
+  margin-top: 20px; 
+}
+
+.math-problem.incorrect .number,
+.math-problem.incorrect .multiplication-sign {
+  color: #dc2626;
+}
+
+.math-problem.incorrect .answer-line {
+  background-color: #dc2626;
+}
+
+.math-problem.incorrect .answer-input {
+  color: #dc2626;
+}
+
+.math-problem.correct .number,
+.math-problem.correct .multiplication-sign {
+  color: #059669;
+}
+
+.math-problem.correct .answer-line {
+  background-color: #059669;
+}
+
+.math-problem.correct .answer-input {
+  color: #059669;
 }

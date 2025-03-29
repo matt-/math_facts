@@ -9,12 +9,60 @@ interface PracticePageProps {
 
 export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: PracticePageProps) {
   const [problems, setProblems] = useState<Array<[number, number]>>([]);
+  const [showScore, setShowScore] = useState(false);
+  const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [isTimeUp, setIsTimeUp] = useState(false);
+  const [resetTrigger, setResetTrigger] = useState(0);
 
+  // Generate problems on mount and when selectedNumber or problemsPerPage changes
   useEffect(() => {
     generateProblems();
   }, [selectedNumber, problemsPerPage]);
 
+  useEffect(() => {
+    let timer: number;
+    if (isTimerRunning && timeLeft > 0) {
+      timer = window.setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            setIsTimerRunning(false);
+            setIsTimeUp(true);
+            checkAllAnswers();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => window.clearInterval(timer);
+  }, [isTimerRunning]);
+
+  const startTimer = () => {
+    setTimeLeft(60);
+    setIsTimerRunning(true);
+    setIsTimeUp(false);
+    setShowScore(false);
+  };
+
   const generateProblems = () => {
+    setShowScore(false);
+    setIsTimerRunning(false);
+    setIsTimeUp(false);
+    setTimeLeft(60);
+    setResetTrigger(prev => prev + 1);
+    
+    // Clear any existing color classes
+    const inputs = document.querySelectorAll('.answer-input') as NodeListOf<HTMLInputElement>;
+    inputs.forEach(input => {
+      input.classList.remove('correct', 'incorrect');
+      const mathProblem = input.closest('.math-problem');
+      if (mathProblem) {
+        mathProblem.classList.remove('correct', 'incorrect');
+      }
+    });
+
     const newProblems: Array<[number, number]> = [];
     
     if (selectedNumber) {
@@ -61,6 +109,37 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
     window.print();
   };
 
+  const checkAllAnswers = () => {
+    const inputs = document.querySelectorAll('.answer-input') as NodeListOf<HTMLInputElement>;
+    let correct = 0;
+    const total = inputs.length;
+
+    inputs.forEach((input) => {
+      const mathProblem = input.closest('.math-problem');
+      const [multiplicand, multiplier] = input.dataset.problem?.split(',').map(Number) || [0, 0];
+      const expectedAnswer = multiplicand * multiplier;
+      const userAnswer = input.value !== '' ? parseInt(input.value, 10) : null;
+      
+      if (userAnswer === expectedAnswer) {
+        correct++;
+        mathProblem?.classList.add('correct');
+        mathProblem?.classList.remove('incorrect');
+      } else {
+        mathProblem?.classList.add('incorrect');
+        mathProblem?.classList.remove('correct');
+      }
+    });
+
+    setScore({ correct, total });
+    setShowScore(true);
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const getSizeClass = () => {
     if (problemsPerPage <= 30) return 'size-30';
     if (problemsPerPage <= 40) return 'size-40';
@@ -69,6 +148,18 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
 
   return (
     <div className="practice-page">
+      <div className="fixed-timer no-print">
+        <button 
+          onClick={startTimer} 
+          className="timer-btn"
+          disabled={isTimerRunning}
+        >
+          Start Timer
+        </button>
+        <div className={`timer ${isTimerRunning ? 'running' : ''} ${isTimeUp ? 'time-up' : ''}`}>
+          {formatTime(timeLeft)}
+        </div>
+      </div>
       <div className="button-group no-print">
         <button onClick={generateProblems} className="new-problems-btn">
           New Problems
@@ -76,6 +167,14 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
         <button onClick={handlePrint} className="print-btn">
           Print
         </button>
+        <button onClick={checkAllAnswers} className="check-btn">
+          Check All
+        </button>
+        {showScore && (
+          <div className={`score ${(score.correct / score.total) < 0.6 ? 'low' : ''}`}>
+            Score: {score.correct}/{score.total} ({Math.round((score.correct / score.total) * 100)}%)
+          </div>
+        )}
       </div>
       <div className="header-section">
         <h1>{selectedNumber ? `${selectedNumber}'s Times Tables` : 'Mixed Practice'}</h1>
@@ -92,6 +191,7 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
             key={index}
             multiplicand={multiplicand}
             multiplier={multiplier}
+            resetTrigger={resetTrigger}
           />
         ))}
       </div>
