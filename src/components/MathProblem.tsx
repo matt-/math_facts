@@ -4,17 +4,24 @@ interface MathProblemProps {
   multiplicand: number;
   multiplier: number;
   resetTrigger: number;
+  onFirstType: () => void;
 }
 
-export const MathProblem: React.FC<MathProblemProps> = ({ multiplicand, multiplier, resetTrigger }) => {
+export const MathProblem: React.FC<MathProblemProps> = ({ multiplicand, multiplier, resetTrigger, onFirstType }) => {
   const [userAnswer, setUserAnswer] = useState('');
+  const [hasTyped, setHasTyped] = useState(false);
 
   useEffect(() => {
     setUserAnswer('');
+    setHasTyped(false);
   }, [resetTrigger]);
 
   const handleAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    if (!hasTyped) {
+      setHasTyped(true);
+      onFirstType();
+    }
     setUserAnswer(value);
   };
 

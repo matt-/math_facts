@@ -15,6 +15,7 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [resetTrigger, setResetTrigger] = useState(0);
+  const [hasStartedTyping, setHasStartedTyping] = useState(false);
 
   // Generate problems on mount and when selectedNumber or problemsPerPage changes
   useEffect(() => {
@@ -46,12 +47,20 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
     setShowScore(false);
   };
 
+  const handleFirstType = () => {
+    if (!hasStartedTyping && !isTimerRunning && !isTimeUp) {
+      setHasStartedTyping(true);
+      startTimer();
+    }
+  };
+
   const generateProblems = () => {
     setShowScore(false);
     setIsTimerRunning(false);
     setIsTimeUp(false);
     setTimeLeft(60);
     setResetTrigger(prev => prev + 1);
+    setHasStartedTyping(false);
     
     // Clear any existing color classes
     const inputs = document.querySelectorAll('.answer-input') as NodeListOf<HTMLInputElement>;
@@ -152,7 +161,7 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
         <button 
           onClick={startTimer} 
           className="timer-btn"
-          disabled={isTimerRunning}
+          disabled={isTimerRunning || hasStartedTyping}
         >
           Start Timer
         </button>
@@ -192,6 +201,7 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
             multiplicand={multiplicand}
             multiplier={multiplier}
             resetTrigger={resetTrigger}
+            onFirstType={handleFirstType}
           />
         ))}
       </div>
