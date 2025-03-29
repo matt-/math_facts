@@ -58,7 +58,7 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
     setShowScore(false);
     setIsTimerRunning(false);
     setIsTimeUp(false);
-    setTimeLeft(60);
+    setTimeLeft(90);
     setResetTrigger(prev => prev + 1);
     setHasStartedTyping(false);
     

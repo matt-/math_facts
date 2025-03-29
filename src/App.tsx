@@ -3,7 +3,7 @@ import { PracticePage } from './components/PracticePage'
 
 function App() {
   const [selectedNumber, setSelectedNumber] = useState<number | undefined>(undefined);
-  const [problemsPerPage, setProblemsPerPage] = useState(40);
+  const [problemsPerPage, setProblemsPerPage] = useState(30);
   const [showHeader, setShowHeader] = useState(false);
 
   return (
