@@ -1,26 +1,32 @@
 import { useState, useEffect } from 'react';
 import { MathProblem } from './MathProblem';
+import { Operation } from '../App';
 
 interface PracticePageProps {
   selectedNumber?: number;
+  maxDigits: number;
   problemsPerPage: number;
   showHeader: boolean;
+  showAnswers: boolean;
+  operation: Operation;
+  onShowHeaderChange: (checked: boolean) => void;
+  onShowAnswersChange: (checked: boolean) => void;
 }
-
-export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: PracticePageProps) {
+const startTime = 90;
+export function PracticePage({ selectedNumber, maxDigits, problemsPerPage, showHeader, showAnswers, operation, onShowHeaderChange, onShowAnswersChange }: PracticePageProps) {
   const [problems, setProblems] = useState<Array<[number, number]>>([]);
   const [showScore, setShowScore] = useState(false);
   const [score, setScore] = useState({ correct: 0, total: 0 });
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(startTime);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [resetTrigger, setResetTrigger] = useState(0);
   const [hasStartedTyping, setHasStartedTyping] = useState(false);
 
-  // Generate problems on mount and when selectedNumber or problemsPerPage changes
+  // Generate problems on mount and when selectedNumber, problemsPerPage, or operation changes
   useEffect(() => {
     generateProblems();
-  }, [selectedNumber, problemsPerPage]);
+  }, [selectedNumber, problemsPerPage, operation, maxDigits]);
 
   useEffect(() => {
     let timer: number;
@@ -41,7 +47,7 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
   }, [isTimerRunning]);
 
   const startTimer = () => {
-    setTimeLeft(60);
+    setTimeLeft(startTime);
     setIsTimerRunning(true);
     setIsTimeUp(false);
     setShowScore(false);
@@ -86,27 +92,153 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
       // Add first 12 problems (or fewer if problemsPerPage < 12)
       const initialProblems = Math.min(12, problemsPerPage);
       for (let i = 0; i < initialProblems; i++) {
-        const shouldBeTop = Math.random() < 0.5;
-        newProblems.push(shouldBeTop ? 
-          [selectedNumber, numbers[i]] : 
-          [numbers[i], selectedNumber]
-        );
+        let num1: number, num2: number;
+        
+        switch (operation) {
+          case 'addition':
+            // For addition, generate numbers up to maxDigits
+            const maxNum = Math.pow(10, maxDigits) - 1;
+            if (Math.random() < 0.5) {
+              num1 = selectedNumber;
+              num2 = Math.floor(Math.random() * maxNum) + 1;
+            } else {
+              num1 = Math.floor(Math.random() * maxNum) + 1;
+              num2 = selectedNumber;
+            }
+            // Ensure both numbers respect maxDigits
+            if (num1 > maxNum) num1 = maxNum;
+            if (num2 > maxNum) num2 = maxNum;
+            break;
+
+          case 'subtraction':
+            // For subtraction, ensure result is positive and numbers are within maxDigits
+            const maxSubNum = Math.pow(10, maxDigits) - 1;
+            num2 = selectedNumber;
+            // Ensure first number doesn't exceed maxDigits
+            const maxPossible = Math.min(maxSubNum, selectedNumber + maxSubNum);
+            num1 = selectedNumber + Math.floor(Math.random() * (maxPossible - selectedNumber + 1));
+            // Double check both numbers respect maxDigits
+            if (num1 > maxSubNum) num1 = maxSubNum;
+            if (num2 > maxSubNum) num2 = maxSubNum;
+            break;
+            
+          case 'division':
+            // For division, create problems with whole number answers
+            const multiplier = numbers[i];
+            num1 = selectedNumber * multiplier; // dividend
+            num2 = selectedNumber; // divisor
+            break;
+            
+          case 'multiplication':
+          default:
+            // Keep existing multiplication logic (1-12 range)
+            if (Math.random() < 0.5) {
+              num1 = selectedNumber;
+              num2 = numbers[i];
+            } else {
+              num1 = numbers[i];
+              num2 = selectedNumber;
+            }
+        }
+        
+        newProblems.push([num1, num2]);
       }
       
       // Fill remaining slots with random numbers if problemsPerPage > 12
       for (let i = 12; i < problemsPerPage; i++) {
-        const randomNum = Math.floor(Math.random() * 12) + 1;
-        const shouldBeTop = Math.random() < 0.5;
-        newProblems.push(shouldBeTop ? 
-          [selectedNumber, randomNum] : 
-          [randomNum, selectedNumber]
-        );
+        let num1: number, num2: number;
+        
+        switch (operation) {
+          case 'addition':
+            // Generate addition problems with numbers up to maxDigits
+            const maxNum = Math.pow(10, maxDigits) - 1;
+            if (Math.random() < 0.5) {
+              num1 = selectedNumber;
+              num2 = Math.floor(Math.random() * maxNum) + 1;
+            } else {
+              num1 = Math.floor(Math.random() * maxNum) + 1;
+              num2 = selectedNumber;
+            }
+            // Ensure both numbers respect maxDigits
+            if (num1 > maxNum) num1 = maxNum;
+            if (num2 > maxNum) num2 = maxNum;
+            break;
+            
+          case 'subtraction':
+            // Generate subtraction problems with numbers up to maxDigits
+            const maxSubNum = Math.pow(10, maxDigits) - 1;
+            num2 = selectedNumber;
+            // Ensure first number doesn't exceed maxDigits
+            const maxPossible = Math.min(maxSubNum, selectedNumber + maxSubNum);
+            num1 = selectedNumber + Math.floor(Math.random() * (maxPossible - selectedNumber + 1));
+            // Double check both numbers respect maxDigits
+            if (num1 > maxSubNum) num1 = maxSubNum;
+            if (num2 > maxSubNum) num2 = maxSubNum;
+            break;
+            
+          case 'division':
+            // Generate division problems with selectedNumber as divisor
+            const multiplier = Math.floor(Math.random() * 12) + 1;
+            num1 = selectedNumber * multiplier;
+            num2 = selectedNumber;
+            break;
+            
+          case 'multiplication':
+          default:
+            // Keep existing multiplication logic
+            const randomNum = Math.floor(Math.random() * 12) + 1;
+            if (Math.random() < 0.5) {
+              num1 = selectedNumber;
+              num2 = randomNum;
+            } else {
+              num1 = randomNum;
+              num2 = selectedNumber;
+            }
+        }
+        
+        newProblems.push([num1, num2]);
       }
     } else {
-      // For mixed practice, keep it completely random
+      // For mixed practice, generate appropriate random problems
       for (let i = 0; i < problemsPerPage; i++) {
-        const num1 = Math.floor(Math.random() * 12) + 1;
-        const num2 = Math.floor(Math.random() * 12) + 1;
+        let num1: number, num2: number;
+        
+        switch (operation) {
+          case 'addition':
+            // Generate random addition problems with numbers up to maxDigits
+            const maxNum = Math.pow(10, maxDigits) - 1;
+            num1 = Math.floor(Math.random() * maxNum) + 1;
+            // Ensure second number won't make sum exceed maxDigits
+            const maxSecond = Math.min(maxNum, maxNum - num1);
+            num2 = Math.floor(Math.random() * (maxSecond + 1)) + 1;
+            break;
+            
+          case 'subtraction':
+            // Generate random subtraction problems with numbers up to maxDigits
+            const maxSubNum = Math.pow(10, maxDigits) - 1;
+            num2 = Math.floor(Math.random() * maxSubNum) + 1;
+            // Ensure first number doesn't exceed maxDigits
+            const maxFirst = Math.min(maxSubNum, num2 + maxSubNum);
+            num1 = num2 + Math.floor(Math.random() * (maxFirst - num2 + 1));
+            // Double check both numbers respect maxDigits
+            if (num1 > maxSubNum) num1 = maxSubNum;
+            if (num2 > maxSubNum) num2 = maxSubNum;
+            break;
+            
+          case 'division':
+            // Generate random division problems with whole number results
+            num2 = Math.floor(Math.random() * 12) + 1; // divisor 1-12
+            const multiplier = Math.floor(Math.random() * 12) + 1;
+            num1 = num2 * multiplier; // dividend ensures whole number result
+            break;
+            
+          case 'multiplication':
+          default:
+            // Keep existing multiplication logic (1-12 range)
+            num1 = Math.floor(Math.random() * 12) + 1;
+            num2 = Math.floor(Math.random() * 12) + 1;
+        }
+        
         newProblems.push([num1, num2]);
       }
     }
@@ -125,8 +257,24 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
 
     inputs.forEach((input) => {
       const mathProblem = input.closest('.math-problem');
-      const [multiplicand, multiplier] = input.dataset.problem?.split(',').map(Number) || [0, 0];
-      const expectedAnswer = multiplicand * multiplier;
+      const [num1, num2] = input.dataset.problem?.split(',').map(Number) || [0, 0];
+      let expectedAnswer: number;
+      
+      switch (operation) {
+        case 'addition':
+          expectedAnswer = num1 + num2;
+          break;
+        case 'subtraction':
+          expectedAnswer = num1 - num2;
+          break;
+        case 'division':
+          expectedAnswer = num1 / num2;
+          break;
+        case 'multiplication':
+        default:
+          expectedAnswer = num1 * num2;
+      }
+      
       const userAnswer = input.value !== '' ? parseInt(input.value, 10) : null;
       
       if (userAnswer === expectedAnswer) {
@@ -155,6 +303,21 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
     return 'size-50';
   };
 
+  const getOperationTitle = () => {
+    if (!selectedNumber) return 'Mixed Practice';
+    switch (operation) {
+      case 'addition':
+        return `Adding ${selectedNumber}'s`;
+      case 'subtraction':
+        return `Subtracting ${selectedNumber}'s`;
+      case 'division':
+        return `Dividing by ${selectedNumber}'s`;
+      case 'multiplication':
+      default:
+        return `${selectedNumber}'s Times Tables`;
+    }
+  };
+
   return (
     <div className="practice-page">
       <div className="fixed-timer no-print">
@@ -169,12 +332,34 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
           {formatTime(timeLeft)}
         </div>
       </div>
-      <div className="button-group no-print">
-        <button onClick={generateProblems} className="new-problems-btn">
-          New Problems
-        </button>
+      <div className="print-options no-print">
+        <div className="control-group">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={showHeader}
+              onChange={(e) => onShowHeaderChange(e.target.checked)}
+            />
+            Show name/date
+          </label>
+        </div>
+        <div className="control-group">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={showAnswers}
+              onChange={(e) => onShowAnswersChange(e.target.checked)}
+            />
+            Show answers
+          </label>
+        </div>
         <button onClick={handlePrint} className="print-btn">
           Print
+        </button>
+      </div>
+      <div className="practice-controls no-print">
+        <button onClick={generateProblems} className="new-problems-btn">
+          New Problems
         </button>
         <button onClick={checkAllAnswers} className="check-btn">
           Check All
@@ -186,7 +371,7 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
         )}
       </div>
       <div className="header-section">
-        <h1>{selectedNumber ? `${selectedNumber}'s Times Tables` : 'Mixed Practice'}</h1>
+        <h1>{getOperationTitle()}</h1>
         {showHeader && (
           <div className="name-date">
             <span>Name: _______________________</span>
@@ -195,13 +380,15 @@ export function PracticePage({ selectedNumber, problemsPerPage, showHeader }: Pr
         )}
       </div>
       <div className={`problems-grid ${getSizeClass()}`}>
-        {problems.map(([multiplicand, multiplier], index) => (
+        {problems.map(([num1, num2], index) => (
           <MathProblem
             key={index}
-            multiplicand={multiplicand}
-            multiplier={multiplier}
+            multiplicand={num1}
+            multiplier={num2}
+            operation={operation}
             resetTrigger={resetTrigger}
             onFirstType={handleFirstType}
+            showAnswer={showAnswers}
           />
         ))}
       </div>
