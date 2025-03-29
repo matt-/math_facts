@@ -37,7 +37,7 @@ function App() {
         </div>
         {showNumberSelector && (
           <div className="control-group">
-            <label>Practice:</label>
+            <label>Tables:</label>
             <select
               value={selectedNumber || 'mixed'}
               onChange={(e) => setSelectedNumber(e.target.value === 'mixed' ? undefined : Number(e.target.value))}

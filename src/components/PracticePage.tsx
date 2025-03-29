@@ -332,9 +332,18 @@ export function PracticePage({ selectedNumber, maxDigits, problemsPerPage, showH
           {formatTime(timeLeft)}
         </div>
       </div>
-      <div className="print-options no-print">
+      <div className="practice-controls no-print">
         <div className="control-group">
-          <label className="flex items-center gap-2">
+          <button onClick={generateProblems} className="new-problems-btn">
+            New Problems
+          </button>
+          <button onClick={checkAllAnswers} className="check-btn">
+            Check All
+          </button>
+        </div>
+        <div className="control-group">
+          <span className="control-label">Print Options:</span>
+          <label>
             <input
               type="checkbox"
               checked={showHeader}
@@ -342,9 +351,7 @@ export function PracticePage({ selectedNumber, maxDigits, problemsPerPage, showH
             />
             Show name/date
           </label>
-        </div>
-        <div className="control-group">
-          <label className="flex items-center gap-2">
+          <label>
             <input
               type="checkbox"
               checked={showAnswers}
@@ -352,24 +359,16 @@ export function PracticePage({ selectedNumber, maxDigits, problemsPerPage, showH
             />
             Show answers
           </label>
+          <button onClick={handlePrint} className="print-btn">
+            Print
+          </button>
         </div>
-        <button onClick={handlePrint} className="print-btn">
-          Print
-        </button>
       </div>
-      <div className="practice-controls no-print">
-        <button onClick={generateProblems} className="new-problems-btn">
-          New Problems
-        </button>
-        <button onClick={checkAllAnswers} className="check-btn">
-          Check All
-        </button>
-        {showScore && (
-          <div className={`score ${(score.correct / score.total) < 0.6 ? 'low' : ''}`}>
-            Score: {score.correct}/{score.total} ({Math.round((score.correct / score.total) * 100)}%)
-          </div>
-        )}
-      </div>
+      {showScore && (
+        <div className={`score-display no-print ${(score.correct / score.total) < 0.6 ? 'low' : ''}`}>
+          Score: {score.correct}/{score.total} ({Math.round((score.correct / score.total) * 100)}%)
+        </div>
+      )}
       <div className="header-section">
         <h1>{getOperationTitle()}</h1>
         {showHeader && (
